@@ -2,70 +2,88 @@ const Base = {};
 const Request = require('./Request');
 const Parser = require('./Parser');
 const config = require('../api/config');
-Base.search = (req,res) => {
+var querystring = require("querystring");
+
+Base.search = async(req,res) => {
 	let url = req.body.search;
 
-	const parsed = Parser.parseInput(url);
+	let inputs = Parser.parseInput(url);
 	let allData = [];
-	parsed.forEach( item=> {
+	for(let i=0; i<inputs.length; i++) {
+		let item = inputs[i];
+		let results = [];
+		let parsedData = {};
 		for(let x=0;x<config.length; x++) {
 			let api = config[x];
-			let results = {};
-			data = Base.correctRequest(item, api);
-
+			item = await Base.findAddressFromString(item);
+			api = Base.correctRequest(item, api);
 			let baseUrl = api.url;
 			let data = api.data ?? {};
 			let returnType = api.returnType;
 			let method = api.method;
 			let headers = api.headers ?? {};
-			Request.request(baseUrl, data,returnType, method, headers).then(data=> {
-				results.push(eval(Parser.api['parseMethod'], data))
-			})
+			console.log(baseUrl);
+			let response = await Request.request(baseUrl, data,returnType, method, headers);
+			if(typeof Parser[api['parseMethod']] === 'function') {
+				parsedData = Parser[api['parserMethod']](response);
+			}else {
+				parsedData = Parser.defaultParseData(response);
+			}
+			results.push({parsedData:parsedData, data:data});
 		}
 		allData.push({
 			url: item,
-			resulst: results
+			results: results
 		})
-	})
+		// console.log(JSON.stringify(allData.results))
+	}
+	res.setHeader('Content-Type', 'application/json');
+	res.render('results', {content: allData});
 }
 
 Base.correctRequest = (item, api) => {
-	if(item == false)
-		return;
+	if(item == false || (item.type == null)||(item.value == null)) {
+		throw new Error('Data is not correct');
+		return ;
+	}
 	let value = item.value;
 	let type = item.type;
-	if('apiKey' in api && api.type=='GET') {
-		api.url.prototype.replace('%%apiKey%%', api.apiKey);
+	value = querystring.escape(value);
+	if('apiKey' in api && api.method=='GET') {
+		api.url = api.url.replace('%%apiKey%%', api.apiKey);
 	}
 	if(api.url.includes('%%url%%'))
 	{
 		// Check if url is url
 		// if isUrl
 		if(type == 'URL') {
-			api.url.prototype.replace('%%url%%', value);
+			api.url = api.url.replace('%%url%%', value);
 		}else {
 			// correct ip to url
 			let url = Parser.ipToDomain(value);
-			api.url.prototype.replace('%%url%%', url);
+			api.url = api.url.replace('%%url%%', url);
 		}
 	}else if(api.url.includes('%%ip%%')) {
 		// if is IP
 		// if is
 		if(type == 'URL') {
 			let ip = Parser.domainToIp(value);
-			api.url.prototype.replace('%%ip%%', ip);
+			api.url = api.url.replace('%%ip%%', ip);
 		}else {
-			api.prototype.replace('%%ip%%', value);
+			api.url = api.url.replace('%%ip%%', value);
 		}
 	}
 
 	if(api.type == 'POST') {
 
 	}
+	// console.log('## API ##');
+	// console.log(api);
+	api.url = api.url.replace('%%%%')
 	return api;
 }
 
-const findAddressFromString = async (findFrom) => {
+Base.findAddressFromString = async (findFrom) => {
 	const IP_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
 	const DOMAIN_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
 	const NON_HTTP_PREFIX_REGEX = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/

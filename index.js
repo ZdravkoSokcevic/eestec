@@ -20,4 +20,4 @@ app.get('/', function (req,res) {
 
 app.post('/', BaseController.search);
 
-app.listen(process.env.APP_PORT, process.env.APP_HOST);
+app.listen(PORT, process.env.APP_HOST);

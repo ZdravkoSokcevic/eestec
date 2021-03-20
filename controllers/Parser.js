@@ -57,9 +57,20 @@ Parser.parseInput = input => {
 	return data;
 }
 
-Parser.ipQualityScoreParser = data => {
-
+Parser.defaultParseData = data => {
+	return data;
+	// try {
+	// 	let parsed = JSON.parse(data);
+	// 	return parsed;
+	// } catch(e) {
+	// 	// statements
+	// 	return data;
+	// }
 }
+
+// Parser.ipQualityScoreParser = data => {
+
+// }
 
 // address: "93.184.216.34" family: IPv4
 module.exports = Parser;

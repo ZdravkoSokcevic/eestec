@@ -1,8 +1,9 @@
 const https = require('https');
 const URL = require('url');
 const Request = {};
-Request.request = (url, data, returnType, method= 'POST', headers=false)=> {
+Request.request = (url, data, returnType, method, headers=false)=> {
 	return new Promise((res,rej) => {
+		console.log(method);
 		if(method == 'GET') {
 			https.get(url, response=> {
 				let chunk = '';

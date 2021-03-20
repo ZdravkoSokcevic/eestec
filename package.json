@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "start": "node index.js"
+    "start": "node index.js",
+    "nodemon": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,8 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "node-html-parser": "^3.1.0",
-    "nodejs-web-scraper": "^5.0.0"
+    "nodejs-web-scraper": "^5.0.0",
+    "nodemon": "^2.0.7",
+    "querystring": "^0.2.1"
   }
 }
