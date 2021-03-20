@@ -1,6 +1,7 @@
 const dns = require('dns');
+const Parser = {};
 
-const domainToIp = domain => {
+Parser.domainToIp = domain => {
 	return new Promise((res,rej) => {
 		dns.lookup('example.org', (err, address, family) => {
 			res(address);
@@ -10,7 +11,7 @@ const domainToIp = domain => {
 	})
 }
 
-const ipToDomain = (ip, port=80) => {
+Parser.ipToDomain = (ip, port=80) => {
 	return new Promise((res,rej) => {
 		const dnsPromises = dns.promises;
 		dnsPromises.lookupService(ip, 80).then((result, domain) => {
@@ -21,7 +22,7 @@ const ipToDomain = (ip, port=80) => {
 	})
 }
 
-function reverseLookup(ip) {
+Parser.reverseLookup(ip) {
 	dns.reverse(ip,function(err,domains){
 		if(err!=null)	callback(err);
 
@@ -34,18 +35,31 @@ function reverseLookup(ip) {
 	});
 }
 
-domainToIp('http://google.com');
-const findDoamin = async ip => {
-	let result = await ipToDomain(ip);
-	console.log(result);
+// domainToIp('http://google.com');
+// const findDoamin = async ip => {
+// 	let result = await ipToDomain(ip);
+// 	console.log(result);
+// }
+
+// ipToDomain('89.216.25.22').then(res => {
+// 	console.log(res);
+// })
+
+Parser.csvParser = data => {
+
 }
 
-ipToDomain('89.216.25.22').then(res => {
-	console.log(res);
-})
 
-const csvParser = data => {
+Parser.parseInput = input => {
+	let data = '';
+	data = input.split(/\n|,| /);
+	
+	return data;
+}
+
+Parser.ipQualityScoreParser = data => {
 
 }
 
 // address: "93.184.216.34" family: IPv4
+module.exports = Parser;
