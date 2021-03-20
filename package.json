@@ -1,0 +1,32 @@
+{
+  "name": "eestec",
+  "version": "1.0.0",
+  "description": "Eestec challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZdravkoSokcevic/eestec.git"
+  },
+  "keywords": [
+    "Eestec",
+    "mallware",
+    "challenge",
+    "tester"
+  ],
+  "author": "Zdravko Sokcevic, Milan Rajkovic, Aleksandra Ristic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZdravkoSokcevic/eestec/issues"
+  },
+  "homepage": "https://github.com/ZdravkoSokcevic/eestec#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "node-html-parser": "^3.1.0",
+    "nodejs-web-scraper": "^5.0.0"
+  }
+}
