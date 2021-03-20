@@ -2,8 +2,15 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const PORT = 3000;
+const bodyParser = require('body-parser')
 
-const BaseController = require('controllers/Base');
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+ 
+// parse application/json
+app.use(bodyParser.json())
+
+const BaseController = require('./controllers/Base');
 
 app.set('view engine', 'ejs');
 
@@ -13,4 +20,4 @@ app.get('/', function (req,res) {
 
 app.post('/', BaseController.search);
 
-app.listen(PORT);
+app.listen(process.env.APP_PORT, process.env.APP_HOST);

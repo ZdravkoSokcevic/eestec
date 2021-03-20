@@ -43,4 +43,9 @@ const findDoamin = async ip => {
 ipToDomain('89.216.25.22').then(res => {
 	console.log(res);
 })
+
+const csvParser = data => {
+
+}
+
 // address: "93.184.216.34" family: IPv4
