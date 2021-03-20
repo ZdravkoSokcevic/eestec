@@ -65,4 +65,21 @@ Base.correctRequest = (item, api) => {
 	return api;
 }
 
+const findAddressFromString = async (findFrom) => {
+	const IP_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+	const DOMAIN_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+	const NON_HTTP_PREFIX_REGEX = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+
+	let found = findFrom.match(IP_REGEX);
+	if (found) {
+		return {type : 'IP', value : found[0]}
+	}
+	found = findFrom.match(DOMAIN_REGEX);
+	if(found) {
+		return {type : "URL", value : found[0]}
+	}
+
+	return {type : null, value: null}
+}
+
 module.exports = Base;

@@ -22,7 +22,7 @@ Parser.ipToDomain = (ip, port=80) => {
 	})
 }
 
-Parser.reverseLookup(ip) {
+Parser.reverseLookup = (ip) => {
 	dns.reverse(ip,function(err,domains){
 		if(err!=null)	callback(err);
 
