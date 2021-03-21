@@ -28,11 +28,14 @@
     "custom-env": "^2.0.1",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "jsdom": "^16.5.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "node-html-parser": "^3.1.0",
     "nodejs-web-scraper": "^5.0.0",
     "nodemon": "^2.0.7",
-    "querystring": "^0.2.1"
+    "puppeteer": "^8.0.0",
+    "querystring": "^0.2.1",
+    "scrapper-tools": "^2.5.0"
   }
 }

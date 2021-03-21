@@ -10,18 +10,25 @@ Base.search = async(req,res) => {
 	let inputs = Parser.parseInput(url);
 	let allData = [];
 	for(let i=0; i<inputs.length; i++) {
-		let item = inputs[i];
-		if(item == '')
+		let argumentFromInputField = inputs[i];
+		if(argumentFromInputField == '')
 			continue;
 		let results = [];
 		let parsedData = {};
+		let isDataComplete = false;
 		for(let x=0;x<config.length; x++) {
 			let api = config[x];
-			console.log(item);
-			item = await Base.findAddressFromString(item);
-			if(item == '')
+			let parsedArgumentFromInputField = await Base.findAddressFromString(argumentFromInputField);
+			if(parsedArgumentFromInputField == '')
 				continue;
-			api = await Base.correctRequest(item, api);
+			api = await Base.correctRequest(parsedArgumentFromInputField, api);
+			// console.log({
+			// 	'itemType' : parsedArgumentFromInputField.type.toUpperCase(),
+			// 	'ApiType': api.paramType.toUpperCase()
+			// });
+			if((parsedArgumentFromInputField.type.toUpperCase() !== api.paramType.toUpperCase())  && api.paramType !== 'universal') {
+				continue;
+			}
 			if(api == '')
 				continue;
 			let baseUrl = api.url;
@@ -31,16 +38,25 @@ Base.search = async(req,res) => {
 			let headers = api.headers ?? {};
 			let response = await Request.request(baseUrl, data,returnType, method, headers);
 			if(typeof Parser[api['parseMethod']] === 'function') {
-				parsedData = await Parser[api['parserMethod']](response);
+				// console.log("## CONFIG 1");
+				// console.log(config)
+				parsedData = await Parser[api['parseMethod']](api, response);
+				if(parsedData) 
+					isDataComplete = true;
 			}else {
-				parsedData = await Parser.defaultParseData(response);
+				// console.log("## CONFIG 2");
+				// console.log(config)
+				parsedData = await Parser.defaultParseData(api, response);
+				if(parsedData)
+					isDataComplete = true;
 			}
 			results.push({parsedData:parsedData, data:data});
 		}
-		allData.push({
-			url: item,
-			results: results
-		})
+		if(isDataComplete)
+			allData.push({
+				url: argumentFromInputField,
+				results: results
+			})
 		// console.log(JSON.stringify(allData.results))
 	}
 	res.setHeader('Content-Type', 'application/json');
@@ -48,7 +64,6 @@ Base.search = async(req,res) => {
 }
 
 Base.correctRequest = async(item, api) => {
-	console.log(api.url)
 	if(item == false || (item.type == null)||(item.value == null)) {
 		// console.log(`ITEM: ${JSON.stringify(item)}`);
 		//throw new Error('Data is not correct');
@@ -85,13 +100,14 @@ Base.correctRequest = async(item, api) => {
 		}else {
 			api.url = api.url.replace('%%ip%%', value);
 		}
+	}else if(api.url.includes("%%base64_ip%%") && api.paramType == 'ip') {
+		let buffer = new Buffer(value);
+		api.url = api.url.replace('%%base64_ip%%', buffer.toString('base64'));
 	}
 
 	if(api.type == 'POST') {
 
 	}
-	// console.log('## API ##');
-	console.log(api.url);
 	// api.url = api.url.replace('%%%%')
 	return api;
 }
@@ -101,8 +117,11 @@ Base.findAddressFromString = async (findFrom) => {
 	const DOMAIN_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
 	const NON_HTTP_PREFIX_REGEX = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
 
-	if(findFrom == '' || (typeof findFrom == undefined) || !(typeof findFrom === 'string'))
+	if(findFrom == '' || (typeof findFrom == undefined) || !(typeof findFrom === 'string')) {
+		console.log('## FIND ADDRESS FROM STRING FAILED ##')
+		console.log(findFrom)
 		return '';
+	}
 	let found = findFrom.match(IP_REGEX);
 	if (found) {
 		return {type : 'IP', value : found[0]}
