@@ -8,5 +8,15 @@
 		"returnType": "json",
 		"method": "GET",
 		"dataParam": "file"
+	},
+	{
+		"name":"ipQualityScore",
+		"apiKey": "UlI8Gpaa8wSFpgSPalBvG5VoxJb9RzvR",
+		"url": "https://ipqualityscore.com/api/json/ip/%%apiKey%%/%%ip%%",
+		"priority": 1,
+		"parseMethod": "ipQualityScoreParser",
+		"returnType": "json",
+		"method": "GET",
+		"dataParam": "file"
 	}
 ]

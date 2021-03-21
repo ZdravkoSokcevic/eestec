@@ -4,7 +4,8 @@ const Parser = {};
 Parser.domainToIp = domain => {
 	return new Promise((res,rej) => {
 		dns.lookup('example.org', (err, address, family) => {
-			res(address);
+			if(err) res(err);
+			else res(address);
 		  // console.log('address: %j family: IPv%s', address, family);
 		});
 
@@ -18,6 +19,8 @@ Parser.ipToDomain = (ip, port=80) => {
 		  // console.log(result.hostname, result.service);
 		  // Prints: localhost ssh
 		  res(result);
+		}).catch(err => {
+			rej(err);
 		});
 	})
 }
@@ -52,13 +55,29 @@ Parser.csvParser = data => {
 
 Parser.parseInput = input => {
 	let data = '';
-	data = input.split(/\n|,| /);
-	
-	return data;
+	input = input.replace(", ", "%%");
+	input = input.replace(" ", "%%");
+	input = input.replace(",", "%%");
+	input = input.replace(";", "%%");
+	// input = input.replace(0x, "%%");
+	input = input.replace("\n", "%%");
+	input = input.replace("<br>", "%%");
+	input = input.replace("<br/>", "%%");
+
+	data = input.split("%%");
+	let final = [];
+	for(let x=0; x<data.length; x++) {
+		let str = data[x].replace(" ", "",(data[x]));
+		if(str !== '')
+			final.push(str);
+	}
+	// data = input;
+	console.log(final);
+	return final;
 }
 
 Parser.defaultParseData = data => {
-	return data;
+	return JSON.parse(data);
 	// try {
 	// 	let parsed = JSON.parse(data);
 	// 	return parsed;
