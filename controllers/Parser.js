@@ -207,7 +207,23 @@ Parser.opswatParser = async (config, html)=> {
 	const HTMLParser = require("node-html-parser");
 	const puppeteer = require("puppeteer");
 
+	const content = await getHtmlFromUrl(config.url)
+
+
 }
+
+async function getHtmlFromUrl(url) {
+  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+  const page = await browser.newPage();
+  await page.goto(url);
+
+  const content = HTMLParser.parse(await page.content());
+
+  await browser.close();
+  return content;
+}
+
+fun
 // const getParsed = async() => {
 // 	let file = fs.readFileSync('../api/noninfected.html');
 // 	// let url = 'https://exchange.xforce.ibmcloud.com/ip/%%ip%%';
