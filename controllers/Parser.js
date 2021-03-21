@@ -128,10 +128,10 @@ Parser.htmlDoc = (config, html) => {
 	console.log(config["infectedSelector"]);
 	let value = 'Failed from htmlDoc parser!';
 	try {
-		// let infectedSlector =  dom.window.document.querySelectorAll(config["infectedSelector"]);
-		let infectedSlector = dom.window.document.querySelectorAll('p.infoText');
-		console.log(infectedSelector);
-		console.log(config["infectedSelector"]);
+		let infectedSlector =  dom.window.document.querySelectorAll(config["infectedSelector"]);
+		// let infectedSlector = dom.window.document.querySelectorAll('p.infoText');
+		// console.log(infectedSelector);
+		// console.log(config["infectedSelector"]);
 		if(infectedSelector[0].innerHTML == config["infectedStringValue"]) {
 			//sus
 			value = infectedSelector[0].innerHTML;
@@ -145,8 +145,8 @@ Parser.htmlDoc = (config, html) => {
 	}
 
 	try {
-		// let safeSelector =  dom.window.document.querySelectorAll(config["safeSelector"]);
-		let safeSelector = dom.window.document.querySelectorAll('p.infoText');
+		let safeSelector =  dom.window.document.querySelectorAll(config["safeSelector"]);
+		// let safeSelector = dom.window.document.querySelectorAll('p.infoText');
 		console.log(safeSelector);
 		if(safeSelector[0].innerHTML == config["infectedStringValue"]) {
 			//sus
