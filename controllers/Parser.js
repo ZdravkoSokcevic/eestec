@@ -223,7 +223,7 @@ async function getHtmlFromUrl(url) {
   return content;
 }
 
-fun
+// fun
 // const getParsed = async() => {
 // 	let file = fs.readFileSync('../api/noninfected.html');
 // 	// let url = 'https://exchange.xforce.ibmcloud.com/ip/%%ip%%';

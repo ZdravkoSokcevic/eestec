@@ -3,7 +3,7 @@
 		"name":"Opswat",
 		"apiKey": "",
 		"url": "https://metadefender.opswat.com/results/ip/%%base64_ip%%/overview?lang=en",
-		"parseMethod": "opswatParser",
+		"parseMethod": "opswatParserOld",
 		"priority": 1,
 		"returnType": "HTML",
 		"method": "GET",
