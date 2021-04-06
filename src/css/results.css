@@ -1,0 +1,20 @@
+.container {
+	display: flex;
+	flex-direction: column;
+}
+
+.under {
+	display: flex;
+	flex-direction: row;
+}
+
+.api-info-card {
+	background: linear-gradient(90deg, rgba(95,81,128,0.4) 0%, rgba(45,19,96,0.4) 47%,rgba(2,0,36,0.4)  100%);
+	-moz-box-shadow: 3px 3px 3px #EABFFF;
+	-webkit-box-shadow: 3px 3px 3px #EABFFF;
+	box-shadow: 3px 3px 3px #EABFFF;
+}
+
+.inline {
+	display: inline !important;
+}

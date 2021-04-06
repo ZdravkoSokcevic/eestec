@@ -1,1 +1,72 @@
-<%- JSON.stringify(content) %>
+<% if (locals.debug) { -%>
+	<%- JSON.stringify(debug); %>
+<% } else { -%>
+	
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<title>Eestec</title>
+		<link rel="stylesheet" type="text/css" href="/bootstrap/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/index.css">
+		<link rel="stylesheet" type="text/css" href="/css/results.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+
+	</head>
+	<body>
+		<div id="container">
+			<h1 class="title">Open Source Threat Intelligence Platform</h1>
+			<div class="under row">
+			<% for (var x in content) { %>
+				<div class="col"></div>
+				<div class="col-xs-10 col-md-8 mt-4">
+					<div class="card text-white mb-3 api-info-card p-2">
+						<div class="card-header" style="text-align: center">
+							<% let data = content[x].results.parsedData %>
+							<script type="text/javascript">
+								let data = JSON.parse('<%- JSON.stringify(content[x].results.parsedData) %>');
+								// console.log(data);
+							</script>
+								<% if ('favicon' in data) { -%>
+									<img src="<%- data.favicon %>" style="float:left">
+								<% } else { -%>
+									<img src="https://www.circl.lu/doc/misp/gitbook/images/favicon.ico" style="float:left">
+								<% } -%>
+								<% if ('site' in data) { -%>
+									<h2><%- data.site.toUpperCase()%></h2>
+								<% } else { -%>
+									<h2>To je taj api</h2>
+								<% } -%>
+						</div>
+						<div class="card-body p-4">
+							<% if (!content) { -%>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+									tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+									quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+									consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+									cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+									proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+								</p>
+							<% } else { -%>
+								<% for (let i in data) { -%>
+									<div class="text-left pb-2">
+										<h4 class="inline"><%- i %></h4> &nbsp <p class="inline"><%- data.i%></p>
+									</div>	
+								<% } -%>
+							<% } %>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					
+				</div>
+			<% } %>
+			</div>
+
+		</div>
+		<script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+		<script type="text/javascript" src="/bootstrap/bootstrap.bundle.min.js"></script>
+		<script type="text/javascript" src="/js/index.js"></script>
+	</body>
+	</html>
+<% } -%>

@@ -1,0 +1,53 @@
+[
+	{
+		"name":"ipQualityScore",
+		"apiKey": "UlI8Gpaa8wSFpgSPalBvG5VoxJb9RzvR",
+		"url": "https://ipqualityscore.com/api/json/url/%%apiKey%%/%%url%%",
+		"parseMethod": "ipQualityScoreParser",
+		"priority": 1,
+		"returnType": "json",
+		"method": "GET",
+		"dataParam": "file",
+		"paramType":"url"
+	},
+	{	
+		"name":"Ibm Cloud",
+		"url":"https://exchange.xforce.ibmcloud.com/url/%%url%%",
+		"priority": 1,
+		"parseMethod": "IbmCloudParser",
+		"returnType": "HTML",
+		"method": "GET",
+		"infectedSelector":"#categories>td>ul>li>span",
+		"infectedStringValue": "Mallware",
+		"safeSelector":"#categories>td",
+		"safeStringValue": "Unsuspicious",
+		"paramType":"url"
+	},
+	{
+		"name":"Whois",
+		"apiKey": "",
+		"url": "https://whois.com/whois/%%ip%%",
+		"parseMethod": "opswatParserOld",
+		"priority": 1,
+		"returnType": "HTML",
+		"method": "GET",
+		"paramType":"ip",
+		"infectedSelector":"p.infoText",
+		"infectedStringValue": "No threats detected",
+		"safeSelector":"p",
+		"safeStringValue": "Threads detected"
+	},
+	{	
+		"name":"Ibm Cloud",
+		"url":"https://exchange.xforce.ibmcloud.com/ip/%%ip%%",
+		"priority": 1,
+		"parseMethod": "IbmCloudParser",
+		"returnType": "HTML",
+		"method": "GET",
+		"infectedSelector":"#categories>td>ul>li>span",
+		"infectedStringValue": "Mallware",
+		"safeSelector":"#categories>td",
+		"safeStringValue": "Unsuspicious",
+		"paramType":"ip"
+	}
+]

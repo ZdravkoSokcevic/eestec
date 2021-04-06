@@ -9,6 +9,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
  
 // parse application/json
 app.use(bodyParser.json())
+app.use(express.static(__dirname + "/src"));
 
 const BaseController = require('./controllers/Base');
 
@@ -20,4 +21,8 @@ app.get('/', function (req,res) {
 
 app.post('/', BaseController.search);
 
-app.listen(PORT, process.env.APP_HOST);
+app.get('/search', (req,res) => {
+	res.render('results.ejs', {content:{}});
+});
+
+app.listen(PORT, "0.0.0.0");

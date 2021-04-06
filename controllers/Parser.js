@@ -8,7 +8,7 @@ const {exec} = require('child_process');
 
 Parser.domainToIp = domain => {
 	return new Promise((res,rej) => {
-		dns.lookup('example.org', (err, address, family) => {
+		dns.lookup(domain, (err, address, family) => {
 			if(err) res(err);
 			else res(address);
 		  // console.log('address: %j family: IPv%s', address, family);
@@ -42,6 +42,31 @@ Parser.reverseLookup = (ip) => {
 		});
 	});
 }
+
+Parser.findAddressFromString = async (findFrom) => {
+	const IP_REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+	const DOMAIN_REGEX = /(https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+	const NON_HTTP_PREFIX_REGEX = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+
+	if(findFrom == '' || (typeof findFrom == undefined) || !(typeof findFrom === 'string')) {
+		console.log('## FIND ADDRESS FROM STRING FAILED ##')
+		console.log(findFrom)
+		return '';
+	}
+	let found = findFrom.match(IP_REGEX);
+
+	if (found) {
+		return {type : 'ip', value : found[0]}
+	}
+	found = findFrom.match(NON_HTTP_PREFIX_REGEX);
+	if(found) {
+		return {type : "url", value : found[0]}
+	}
+
+	return {type : null, value: null}
+}
+
+
 
 // domainToIp('http://google.com');
 // const findDoamin = async ip => {
@@ -86,6 +111,32 @@ Parser.parseInput = input => {
 	// data = input;
 	return final;
 }
+(async() => {
+	console.log(await Parser.ipToDomain('89.216.25.22'));
+})()
+
+/*
+	If input is ip, and config require url, then convert
+	Reverse also
+*/
+Parser.getCorrectValueForInput = async(input,config) => {
+	let value = input.value;
+	if(config.url.includes('%%url%%') && input.type == 'ip')
+		return false;
+		// value = await Parser.ipToDomain(input.value)
+	if(config.url.includes('%%ip') && input.type == 'url') 
+	{
+		value = await Parser.domainToIp(input.value)
+		value = ('hostname' in input)? input.hostname : input;
+	}
+	if(config.url.includes('%%base64_ip%%') && config.paramType == 'base64_ip') 
+	{
+		let buffer = new Buffer(input.value);
+		value = buffer.toString('base64');
+	}
+	input.value = value;
+	return input;
+}
 
 Parser.defaultParseData = (config, data) => {
 	// thow new Error('dgfdgfd');
@@ -103,10 +154,13 @@ Parser.defaultParseData = (config, data) => {
 	// }
 }
 
-Parser.htmlDoc = (config, html) => {
+Parser.htmlDoc = async(config, html) => {
 	const dom = new JSDOM(html);
 	// console.log(dom);
-	console.log(config);
+	// console.log(html);
+	// html = require('../api/novi.html')
+	// html = await fs.readFileSync('api/novi.html');
+	// console.log(config);
 	if(config.name == 'Opswat')
 	{
 		// console.log(html);
@@ -125,40 +179,43 @@ Parser.htmlDoc = (config, html) => {
 		// 	if(err)console.log(err);
 		// });
 	}
-	console.log(config["infectedSelector"]);
+	// console.log(html);
 	let value = 'Failed from htmlDoc parser!';
-	try {
-		let infectedSlector =  dom.window.document.querySelectorAll(config["infectedSelector"]);
+	// try {
+		let infectedSelector =  dom.window.document.querySelector(config["infectedSelector"]);
 		// let infectedSlector = dom.window.document.querySelectorAll('p.infoText');
-		// console.log(infectedSelector);
-		// console.log(config["infectedSelector"]);
-		if(infectedSelector[0].innerHTML == config["infectedStringValue"]) {
-			//sus
-			value = infectedSelector[0].innerHTML;
-		} else if (safeSelector[0].innerHTML == config["safeStringValue"]) {
-			//notSus
-			value = infectedSelector[0].innerHTML;
-		}	
-	} catch(e) {
-		// statements
-		// console.log(e);
-	}
-
-	try {
-		let safeSelector =  dom.window.document.querySelectorAll(config["safeSelector"]);
-		// let safeSelector = dom.window.document.querySelectorAll('p.infoText');
-		console.log(safeSelector);
-		if(safeSelector[0].innerHTML == config["infectedStringValue"]) {
-			//sus
-			value = safeSelector[0].innerHTML;
-		} else if (safeSelector[0].innerHTML == config["safeStringValue"]) {
-			//notSus
-			value = safeSelector[0].innerHTML;
+		console.log(infectedSelector);
+		if(infectedSelector)
+		{
+			// console.log(config["infectedSelector"]);
+			if(infectedSelector[0].innerHTML == config["infectedSelectorStringValue"]) {
+				//sus
+				value = infectedSelector[0].innerHTML;
+			} else if (safeSelector[0].innerHTML == config["safeStringValue"]) {
+				//notSus
+				value = infectedSelector[0].innerHTML;
+			}	
 		}
-	} catch(e) {
-		// statements
-		// console.log(e);
-	}
+	// } catch(e) {
+	// 	// statements
+	// 	// console.log(e);
+	// }
+
+	// try {
+	// 	let safeSelector =  dom.window.document.querySelectorAll(config["safeSelector"]);
+	// 	// let safeSelector = dom.window.document.querySelectorAll('p.infoText');
+	// 	console.log(safeSelector);
+	// 	if(safeSelector[0].innerHTML == config["infectedStringValue"]) {
+	// 		//sus
+	// 		value = safeSelector[0].innerHTML;
+	// 	} else if (safeSelector[0].innerHTML == config["safeStringValue"]) {
+	// 		//notSus
+	// 		value = safeSelector[0].innerHTML;
+	// 	}
+	// } catch(e) {
+	// 	// statements
+	// 	// console.log(e);
+	// }
 
 	return [{
 		site: config.name,
@@ -183,6 +240,7 @@ Parser.opswatParserOld = (config, html)=> {
 }
 
 Parser.opswatParserSecondAttempt = async (config, html)=> {
+	// html = require('../fajl.html');
 	const sc = require("scrapper-tools")
 	const path = require("path")
 	console.log(config.url);
@@ -233,7 +291,8 @@ async function getHtmlFromUrl(url) {
 // }
 // getParsed();
 Parser.ipQualityScoreParser = (config, jsonData) => {
-	let res = JSON.parse(jsonData)["unsafe"]
+	console.log(jsonData);
+	let res = JSON.parse(jsonData)["suspicious"]
 
 	if(typeof res === "undefined") res = "Failed"
 

@@ -25,9 +25,11 @@
   },
   "homepage": "https://github.com/ZdravkoSokcevic/eestec#readme",
   "dependencies": {
+    "FormData": "^0.10.1",
     "custom-env": "^2.0.1",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "follow-redirects": "^1.13.3",
     "jsdom": "^16.5.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",

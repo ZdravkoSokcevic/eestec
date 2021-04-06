@@ -1,0 +1,32 @@
+{
+	"google.com": [
+		{
+			"api": "StaxExchange api",
+			"results": {
+				"infected": true,
+				"malicious": false
+			}
+		},{
+			"api": "Ibm api",
+			"results": {
+				"infected": true,
+				"malicious": false
+			}
+		}
+	],
+	"duckduckgo.com": [
+		{
+			"api": "StaxExchange api",
+			"results": {
+				"infected": false,
+				"malicious": false
+			}
+		},{
+			"api": "Ibm api",
+			"results": {
+				"infected": false,
+				"malicious": false
+			}
+		}
+	]
+}
