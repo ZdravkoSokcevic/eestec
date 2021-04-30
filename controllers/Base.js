@@ -34,6 +34,7 @@ Base.processAllRequests = async inputs => {
 		let parsedData = {};
 		// let isDataComplete = false;
 		// console.log(config);
+		results[argumentFromInputField] = [];
 		for(let x=0;x<config.length; x++) {
 			let api = config[x];
 			// let oneResult={};
@@ -68,14 +69,18 @@ Base.processAllRequests = async inputs => {
 					// console.log(config)
 					parsedData = await Parser.defaultParseData(api, response);
 				}
+				// if(parsedData[0])
+				// 	parsedData = parsedData[0]
+				console.log(parsedData);
 				let oneResult = {
 					key: inputKey,
 					inputIndex: i,
 					configIndex: x,
 					url: argumentFromInputField,
-					results:{parsedData:parsedData, api:api}
+					parsedData, 
+					api:api
 				};
-				results[oneResult.key] = oneResult;
+				results[argumentFromInputField].push(oneResult);
 
 			})
 			.catch(err => {
